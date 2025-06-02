@@ -1,0 +1,72 @@
+postgresql:
+  enabled: true
+  auth:
+    username: "bn_backstage"
+    existingSecret: "my-backstage-secrets"
+    secretKeys:
+      adminPasswordKey: "postgres-password"
+      userPasswordKey: "password"
+
+backstage:
+  extraAppConfig:
+    - filename: app-config.extra.yaml
+      configMapRef: my-app-config
+
+  extraVolumes:
+    - name: my-app-config
+      configMap:
+        name: my-app-config
+
+  extraEnvVars:
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-backstage-secrets
+          key: POSTGRES_PASSWORD
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: my-backstage-secrets
+          key: POSTGRES_USER
+    - name: BACKEND_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: my-backstage-secrets
+          key: BACKEND_SECRET
+    - name: LDAP_BIND_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-backstage-secrets
+          key: LDAP_BIND_PASSWORD
+    - name: GITLAB_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: my-backstage-secrets
+          key: GITLAB_TOKEN
+
+    - name: AUTH_GUEST_ENABLED
+      value: "true"
+    - name: NODE_ENV
+      value: development
+    - name: AUTH_ENVIRONMENT
+      value: development
+
+  # image:
+  #   registry: registry.lksnext.com
+  #   repository: oficinatecnica/tools/backstage/backstage-backend
+  #   tag: ldap-v1
+  #   pullPolicy: Always
+  #   pullSecrets:
+  #     - "nexus-secret"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: backstage.lksnext.com
+  path: /
+  tls:
+    enabled: true
+    secretName: lksnext-tls-secret

@@ -1,0 +1,87 @@
+app:
+  # URL pública de acceso
+  baseUrl: https://backstage.lksnext.com
+
+auth:
+  environment: development
+  providers:
+    guest:
+      enabled: true
+      dangerouslyAllowOutsideDevelopment: true
+
+backend:
+  # Mismo dominio si está tras el mismo ingress
+  baseUrl: https://backstage.lksnext.com
+  listen:
+    host: 0.0.0.0
+    port: 7007
+  auth:
+    keys:
+      # Referencia a la variable de entorno para el secreto del backend
+      - secret: ${BACKEND_SECRET}
+  cors:
+    # Asegurar CORS para el frontend
+    origin: https://backstage.lksnext.com
+
+techdocs:
+  builder: "local"
+  generator:
+    runIn: "local"
+  publisher:
+    type: "local"
+
+database:
+  client: pg
+  connection:
+    host: ${POSTGRES_HOST}
+    port: ${POSTGRES_PORT}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+identity:
+  organization: lksnext
+  type: guest
+
+permission:
+  enabled: true
+  policy:
+    "@backstage/plugin-permission-node":
+      rules:
+        - permission: catalog.entity.read
+          allow: [ALL]
+
+# --- Configuración de SINCRONIZACIÓN del Catálogo LDAP ---
+catalog:
+  rules:
+    - allow:
+        [
+          Component,
+          API,
+          Group,
+          User,
+          Template,
+          System,
+          Domain,
+          Resource,
+          Location,
+        ]
+  providers:
+    ldapOrg:
+      production:
+        target: "ldap://192.168.2.86:389"
+        bind:
+          dn: "CN=devops,OU=Usuarios,DC=GrupoLKS,DC=local"
+          secret: "usuario1*"
+        users:
+          dn: "DC=GrupoLKS,DC=local"
+        schedule:
+          frequency: PT10H
+          timeout: PT5H
+
+# --- Integración con GitLab ---
+integrations:
+  gitlab:
+    - host: gitlab.devops.lksnext.com
+      apiBaseUrl: https://gitlab.devops.lksnext.com/api/v4
+      # Referencia a la variable de entorno para el token
+      token: ${GITLAB_TOKEN}

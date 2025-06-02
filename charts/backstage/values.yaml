@@ -249,7 +249,8 @@ backstage:
 
   # -- Security settings for a Container.
   # <br /> Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  containerSecurityContext: {}
+  containerSecurityContext:
+    runAsUser: 0
 
   # Allows to define the appConfig as a multiline string that generates a ConfigMap
   # automatically, not requiring to have it pre provisioned as with the extraAppConfig key.
