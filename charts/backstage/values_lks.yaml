@@ -6,6 +6,10 @@ postgresql:
     secretKeys:
       adminPasswordKey: "postgres-password"
       userPasswordKey: "password"
+  primary: 
+    persistence:
+      enabled: true
+      size: 8Gi 
 
 backstage:
   extraAppConfig:
@@ -18,16 +22,6 @@ backstage:
         name: my-app-config
 
   extraEnvVars:
-    - name: POSTGRES_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: my-backstage-secrets
-          key: POSTGRES_PASSWORD
-    - name: POSTGRES_USER
-      valueFrom:
-        secretKeyRef:
-          name: my-backstage-secrets
-          key: POSTGRES_USER
     - name: BACKEND_SECRET
       valueFrom:
         secretKeyRef:
@@ -47,17 +41,17 @@ backstage:
     - name: AUTH_GUEST_ENABLED
       value: "true"
     - name: NODE_ENV
-      value: development
+      value: production
     - name: AUTH_ENVIRONMENT
-      value: development
+      value: production
 
-  # image:
-  #   registry: registry.lksnext.com
-  #   repository: oficinatecnica/tools/backstage/backstage-backend
-  #   tag: ldap-v1
-  #   pullPolicy: Always
-  #   pullSecrets:
-  #     - "nexus-secret"
+  image:
+    registry: registry.lksnext.com
+    repository: oficinatecnica/tools/backstage/backstage-unificado
+    tag: ldap-v1.1.0
+    pullPolicy: Always
+    pullSecrets:
+      - "nexus-secret"
 
 ingress:
   enabled: true

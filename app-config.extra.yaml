@@ -3,11 +3,18 @@ app:
   baseUrl: https://backstage.lksnext.com
 
 auth:
-  environment: development
+  environment: production
   providers:
-    guest:
-      enabled: true
-      dangerouslyAllowOutsideDevelopment: true
+    microsoft:
+      production:
+        clientId: 492a7069-d258-4626-82e2-b2c491e5373e
+        clientSecret: e~18Q~liOV1IHVHEHGjhEnb8nAzYQLqT6h6XCaQY
+        tenantId: b85a15eb-1d5f-449e-93d8-77a9cba50013
+        domainHint: b85a15eb-1d5f-449e-93d8-77a9cba50013
+        redirectUri: https://backstage.lksnext.com/api/auth/microsoft/handler/frame?env=production
+        signIn:
+          resolvers:
+            - resolver: emailMatchingUserEntityProfileEmail
 
 backend:
   # Mismo dominio si está tras el mismo ingress
@@ -65,18 +72,11 @@ catalog:
           Resource,
           Location,
         ]
-  providers:
-    ldapOrg:
-      production:
-        target: "ldap://192.168.2.86:389"
-        bind:
-          dn: "CN=devops,OU=Usuarios,DC=GrupoLKS,DC=local"
-          secret: "usuario1*"
-        users:
-          dn: "DC=GrupoLKS,DC=local"
-        schedule:
-          frequency: PT10H
-          timeout: PT5H
+  locations:
+    - type: url
+      target: https://gitlab.devops.lksnext.com/qa/backstage-example/-/blob/main/examples/structure/lks-org.yaml
+      rules: 
+        - allow: [User, Group] 
 
 # --- Integración con GitLab ---
 integrations:
