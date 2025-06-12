@@ -48,7 +48,7 @@ backstage:
   image:
     registry: registry.lksnext.com
     repository: oficinatecnica/tools/backstage/backstage-unificado
-    tag: ldap-v1.1.0
+    tag: ldap-v1.2.1
     pullPolicy: Always
     pullSecrets:
       - "nexus-secret"
